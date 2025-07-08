@@ -35,6 +35,7 @@
     "credentials": [
     ],
     "nodes": [
+      "dist/nodes/HttpBin/HttpBin.node.js",
       "dist/nodes/Matrix42/Matrix42.node.js"
     ]
   },

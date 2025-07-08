@@ -5,7 +5,8 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
-import {matrix42OperationFields, matrix42Operations} from "./matrix42Operations";
+import {matrix42TicketFields, matrix42TicketOperations} from "./matrix42TicketOperations";
+import {matrix42AssetFields, matrix42AssetOperations} from "./matrix42AssetOperations";
 
 export class Matrix42 implements INodeType {
 	description: INodeTypeDescription = {
@@ -14,6 +15,7 @@ export class Matrix42 implements INodeType {
  		icon: { light: 'file:matrix42.svg', dark: 'file:matrix42.svg' },
 		group: ['transform'],
 		version: 1,
+		// subtitle: '={{$parameter["matrix42Operation"]}}',
 		description: 'Interact with Matrix42.',
 		defaults: {
 			name: 'Matrix42',
@@ -22,20 +24,35 @@ export class Matrix42 implements INodeType {
 		outputs: [NodeConnectionType.Main],
 		usableAsTool: true,
 		properties: [
-			// Node properties which the user gets displayed and
-			// can change on the node.
 			{
-				displayName: 'My String',
-				name: 'myString',
-				type: 'string',
-				default: '',
-				placeholder: 'Placeholder value',
-				description: 'The description text',
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Ticket',
+						value: 'ticket',
+					},
+					{
+						name: 'Asset',
+						value: 'asset',
+					},
+				],
+				default: 'ticket',
 			},
-			...matrix42Operations,
-			...matrix42OperationFields
+
+			// Tickets
+			...matrix42TicketOperations,
+			...matrix42TicketFields,
+
+			// Assets
+			...matrix42AssetOperations,
+			...matrix42AssetFields
 		],
 	};
+
+
 
 	// The function below is responsible for actually doing whatever this node
 	// is supposed to do. In this case, we're just appending the `myString` property
