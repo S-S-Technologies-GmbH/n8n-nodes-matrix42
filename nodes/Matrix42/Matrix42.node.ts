@@ -1,21 +1,23 @@
 import type {
+	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
-import {matrix42TicketFields, matrix42TicketOperations} from "./matrix42TicketOperations";
-import {matrix42AssetFields, matrix42AssetOperations} from "./matrix42AssetOperations";
-import {matrix42ImportFields, matrix42ImportOperations} from "./matrix42ImportOperations";
-import {matrix42AsqlFields, matrix42AsqlOperations} from "./matrix42AsqlOperations";
-import {matrix42UserFields, matrix42UserOperations} from "./matrix42UserOperations";
+import { NodeConnectionType } from 'n8n-workflow';
+import { matrix42AssetFields, matrix42AssetOperations } from './Matrix42AssetOperations';
+import { matrix42ImportFields, matrix42ImportOperations } from './Matrix42ImportOperations';
+import { matrix42AsqlFields, matrix42AsqlOperations } from './Matrix42AsqlOperations';
+import { matrix42UserFields, matrix42UserOperations } from './Matrix42UserOperations';
+import { matrix42TicketFields, matrix42TicketOperations } from './Matrix42TicketOperations';
+import { matrix42ApiRequest } from './GenericFunctions';
 
 export class Matrix42 implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Matrix42',
 		name: 'matrix42',
- 		icon: { light: 'file:matrix42.svg', dark: 'file:matrix42.svg' },
+		icon: { light: 'file:matrix42.svg', dark: 'file:matrix42.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
@@ -117,43 +119,63 @@ export class Matrix42 implements INodeType {
 		],
 	};
 
-
-
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 
-		let item: INodeExecutionData;
-		let myString: string;
+		const resource = this.getNodeParameter('resource', 0) as string;
+		const operation = this.getNodeParameter('operation', 0) as string;
 
-		// Iterates over all input items and add the key "myString" with the
-		// value the parameter "myString" resolves to.
-		// (This could be a different value for each item in case it contains an expression)
-		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
-			try {
-				myString = this.getNodeParameter('myString', itemIndex, '') as string;
-				item = items[itemIndex];
+		const returnData: IDataObject[] = [];
 
-				item.json.myString = myString;
-			} catch (error) {
-				// This node should never fail but we want to showcase how
-				// to handle errors.
-				if (this.continueOnFail()) {
-					items.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
-				} else {
-					// Adding `itemIndex` allows other workflows to handle this error
-					if (error.context) {
-						// If the error thrown already contains the context property,
-						// only append the itemIndex
-						error.context.itemIndex = itemIndex;
-						throw error;
+		for (let i = 0; i < items.length; i++) {
+			if (resource === 'asql') {
+				if (operation === 'getFragments') {
+					// ----------------------------------
+					// asql:getFragments
+					// ----------------------------------
+					const ddname = this.getNodeParameter('dataDefinition', i) as string;
+					const where = this.getNodeParameter('where', i) as string;
+					const columns = this.getNodeParameter('columns', i) as string;
+
+					const additionalFields = this.getNodeParameter('additionalFields', i, {}) as {
+						pageSize?: number;
+						pageNumber?: number;
+						sort?: string;
+					};
+
+					const qs: IDataObject = {
+						where,
+						columns,
+					};
+
+					if (additionalFields.pageSize !== undefined) {
+						qs.pagesize = additionalFields.pageSize;
 					}
-					throw new NodeOperationError(this.getNode(), error, {
-						itemIndex,
-					});
+					if (additionalFields.pageNumber !== undefined) {
+						qs.pagenumber = additionalFields.pageNumber;
+					}
+					if (additionalFields.sort) {
+						qs.sort = additionalFields.sort;
+					}
+
+					const response = await matrix42ApiRequest.call(
+						this,
+						'GET',
+						`/data/fragments/${ddname}`,
+						{},
+						qs,
+					);
+
+					if (Array.isArray(response)) {
+						returnData.push(...response);
+					} else {
+						returnData.push(response as IDataObject);
+					}
 				}
 			}
 		}
 
-		return [items];
+		const executionData = this.helpers.returnJsonArray(returnData);
+		return [executionData];
 	}
 }
