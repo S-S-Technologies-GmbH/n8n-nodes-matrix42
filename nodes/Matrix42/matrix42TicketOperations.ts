@@ -13,10 +13,22 @@ export const matrix42TicketOperations: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'Close Ticket',
+				value: 'closeTicket',
+				description: 'Close a ticket',
+				action: 'Close ticket',
+			},
+			{
 				name: 'Create Ticket',
 				value: 'createTicket',
 				description: 'Create a ticket',
 				action: 'Create a ticket',
+			},
+			{
+				name: 'Forward Ticket',
+				value: 'forwardTicket',
+				description: 'Forward a ticket',
+				action: 'Forward ticket',
 			},
 			{
 				name: 'Get Ticket Details',

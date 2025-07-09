@@ -7,6 +7,9 @@ import type {
 import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
 import {matrix42TicketFields, matrix42TicketOperations} from "./matrix42TicketOperations";
 import {matrix42AssetFields, matrix42AssetOperations} from "./matrix42AssetOperations";
+import {matrix42ImportFields, matrix42ImportOperations} from "./matrix42ImportOperations";
+import {matrix42AsqlFields, matrix42AsqlOperations} from "./matrix42AsqlOperations";
+import {matrix42UserFields, matrix42UserOperations} from "./matrix42UserOperations";
 
 export class Matrix42 implements INodeType {
 	description: INodeTypeDescription = {
@@ -15,7 +18,7 @@ export class Matrix42 implements INodeType {
  		icon: { light: 'file:matrix42.svg', dark: 'file:matrix42.svg' },
 		group: ['transform'],
 		version: 1,
-		// subtitle: '={{$parameter["matrix42Operation"]}}',
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Interact with Matrix42.',
 		defaults: {
 			name: 'Matrix42',
@@ -31,33 +34,53 @@ export class Matrix42 implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Ticket',
-						value: 'ticket',
+						name: 'ASQL',
+						value: 'asql',
 					},
 					{
 						name: 'Asset',
 						value: 'asset',
 					},
+					{
+						name: 'Import',
+						value: 'import',
+					},
+					{
+						name: 'Ticket',
+						value: 'ticket',
+					},
+					{
+						name: 'User',
+						value: 'user',
+					},
 				],
 				default: 'ticket',
 			},
 
-			// Tickets
+			// Asql
+			...matrix42AsqlOperations,
+			...matrix42AsqlFields,
+
+			// Asset
+			...matrix42AssetOperations,
+			...matrix42AssetFields,
+
+			// Import
+			...matrix42ImportOperations,
+			...matrix42ImportFields,
+
+			// Ticket
 			...matrix42TicketOperations,
 			...matrix42TicketFields,
 
-			// Assets
-			...matrix42AssetOperations,
-			...matrix42AssetFields
+			// User
+			...matrix42UserOperations,
+			...matrix42UserFields,
 		],
 	};
 
 
 
-	// The function below is responsible for actually doing whatever this node
-	// is supposed to do. In this case, we're just appending the `myString` property
-	// with whatever the user has entered.
-	// You can make async calls and use `await`.
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 
