@@ -33,6 +33,8 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
+      "dist/credentials/Matrix42BasicApi.credentials.js",
+      "dist/credentials/Matrix42TokenApi.credentials.js"
     ],
     "nodes": [
       "dist/nodes/HttpBin/HttpBin.node.js",

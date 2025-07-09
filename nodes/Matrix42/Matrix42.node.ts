@@ -25,8 +25,46 @@ export class Matrix42 implements INodeType {
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
+		credentials: [
+			{
+				name: 'matrix42TokenApi',
+				displayName: 'Matrix42 Webservice Token Auth',
+				required: true,
+				displayOptions: {
+					show: {
+						authentication: ['webserviceToken'],
+					},
+				},
+			},
+			{
+				name: 'matrix42BasicApi',
+				displayName: 'Matrix42 Basic Auth',
+				required: true,
+				displayOptions: {
+					show: {
+						authentication: ['basic'],
+					},
+				},
+			},
+		],
 		usableAsTool: true,
 		properties: [
+			{
+				displayName: 'Authentication',
+				name: 'authentication',
+				type: 'options',
+				options: [
+					{
+						name: 'Webservice Token',
+						value: 'webserviceToken',
+					},
+					{
+						name: 'Basic',
+						value: 'basic',
+					},
+				],
+				default: 'webserviceToken',
+			},
 			{
 				displayName: 'Resource',
 				name: 'resource',
