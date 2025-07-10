@@ -1,12 +1,12 @@
 import {
 	IDataObject,
-	IExecuteFunctions,
+	IExecuteFunctions, IHookFunctions,
 	IHttpRequestMethods,
-	IHttpRequestOptions,
+	IHttpRequestOptions, ILoadOptionsFunctions,
 } from 'n8n-workflow';
 
 export async function matrix42ApiRequest(
-	this: IExecuteFunctions,
+	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions,
 	method: IHttpRequestMethods,
 	endpoint: `/${string}`,
 	body: object,
@@ -21,9 +21,10 @@ export async function matrix42ApiRequest(
 	const options: IHttpRequestOptions = {
 		headers: {},
 		method,
-		body: method === 'GET' || method === 'HEAD' || method === 'DELETE' ? null : { data: body },
+		body: method === 'GET' || method === 'HEAD' || method === 'DELETE' ? null : body,
 		qs: query,
-		url: uri || `http://${serverUrl}/m42Services/api/${endpoint}`,
+		// todo https
+		url: uri || `http://${serverUrl}/m42Services/api${endpoint}`,
 		json: true,
 	};
 

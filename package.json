@@ -3,7 +3,8 @@
   "version": "0.1.1",
   "description": "Matrix42 Integration for n8n.",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "Matrix42"
   ],
   "license": "MIT",
   "homepage": "",
@@ -13,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/"
+    "url": "https://github.com/S-S-Technologies-GmbH/n8n-nodes-matrix42"
   },
   "engines": {
     "node": ">=20.15"
