@@ -137,7 +137,15 @@ export class Matrix42 implements INodeType {
 	methods = {
 		loadOptions: {
 			async getUsers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-				const responseData = await matrix42ApiRequest.call(this, 'GET', '/users/available', {}, {});
+				const responseData = await matrix42ApiRequest.call(
+					this,
+					'GET',
+					'/data/fragments/SPSUserClassBase',
+					{},
+					{
+						columns: "ID, FirstName, LastName",
+					}
+				);
 
 				if (responseData === undefined) {
 					throw new NodeApiError(this.getNode(), responseData as JsonObject, {
@@ -148,8 +156,8 @@ export class Matrix42 implements INodeType {
 				const returnData: INodePropertyOptions[] = [];
 
 				for (const userData of responseData) {
-					const userName = userData.Title;
-					const userId = userData.Id;
+					const userName = `${userData.FirstName?? ''} ${userData.LastName?? ''}`;
+					const userId = userData.ID;
 
 					returnData.push({
 						name: userName,
@@ -169,6 +177,8 @@ export class Matrix42 implements INodeType {
 
 				const emptyUser = { name: 'None', value: '00000000-0000-0000-0000-000000000000' };
 				returnData.unshift(emptyUser)
+
+				this.logger.info(JSON.stringify(returnData));
 
 				return returnData;
 			},

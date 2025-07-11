@@ -150,7 +150,7 @@ const addFragmentsOperation: INodeProperties[] = [
 		description: 'Technical name of the Data Definition (e.g. SPSActivityClassBase)',
 		displayOptions: {
 			show: {
-				operation: ['addFragments']
+				operation: ['addFragment']
 			},
 		},
 		required: true,
@@ -163,7 +163,7 @@ const addFragmentsOperation: INodeProperties[] = [
 		description: 'JSON with the new Fragment data',
 		displayOptions: {
 			show: {
-				operation: ['addFragments']
+				operation: ['addFragment']
 			},
 		},
 		required: true,
@@ -179,7 +179,7 @@ const updateFragmentsOperation: INodeProperties[] = [
 		description: 'Technical name of the Data Definition (e.g. SPSActivityClassBase)',
 		displayOptions: {
 			show: {
-				operation: ['updateFragments']
+				operation: ['updateFragment']
 			},
 		},
 		required: true,
@@ -192,7 +192,7 @@ const updateFragmentsOperation: INodeProperties[] = [
 		description: 'JSON with the new Fragment data',
 		displayOptions: {
 			show: {
-				operation: ['updateFragments']
+				operation: ['updateFragment']
 			},
 		},
 		required: true,
@@ -208,20 +208,20 @@ const deleteFragmentsOperation: INodeProperties[] = [
 		description: 'Technical name of the Data Definition (e.g. SPSActivityClassBase)',
 		displayOptions: {
 			show: {
-				operation: ['deleteFragments']
+				operation: ['deleteFragment']
 			},
 		},
 		required: true,
 	},
 	{
 		displayName: 'Fragment ID',
-		name: 'fragmentData',
+		name: 'fragmentId',
 		type: 'string',
 		default: '',
 		description: 'Fragment ID of specified Data Definition',
 		displayOptions: {
 			show: {
-				operation: ['deleteFragments']
+				operation: ['deleteFragment']
 			},
 		},
 		required: true,
