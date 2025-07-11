@@ -178,8 +178,6 @@ export class Matrix42 implements INodeType {
 				const emptyUser = { name: 'None', value: '00000000-0000-0000-0000-000000000000' };
 				returnData.unshift(emptyUser)
 
-				this.logger.info(JSON.stringify(returnData));
-
 				return returnData;
 			},
 			async getTicketUrgencies(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
