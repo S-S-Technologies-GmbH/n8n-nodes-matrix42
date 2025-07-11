@@ -45,3 +45,38 @@ export async function getFragments(this: IExecuteFunctions, i: number) {
 
 	return returnData;
 }
+
+export async function addFragment(this: IExecuteFunctions, i: number) {
+	const returnData: IDataObject[] = [];
+	return returnData;
+}
+
+export async function updateFragment(this: IExecuteFunctions, i: number) {
+	const returnData: IDataObject[] = [];
+	return returnData;
+}
+
+export async function deleteFragment(this: IExecuteFunctions, i: number) {
+	const returnData: IDataObject[] = [];
+	return returnData;
+}
+
+export async function addObject(this: IExecuteFunctions, i: number) {
+	const returnData: IDataObject[] = [];
+	return returnData;
+}
+
+export async function getObject(this: IExecuteFunctions, i: number) {
+	const returnData: IDataObject[] = [];
+	return returnData;
+}
+
+export async function updateObject(this: IExecuteFunctions, i: number) {
+	const returnData: IDataObject[] = [];
+	return returnData;
+}
+
+export async function deleteObject(this: IExecuteFunctions, i: number) {
+	const returnData: IDataObject[] = [];
+	return returnData;
+}

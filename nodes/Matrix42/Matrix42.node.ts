@@ -15,7 +15,16 @@ import { matrix42ImportFields, matrix42ImportOperations } from './Matrix42Import
 import { matrix42AsqlFields, matrix42AsqlOperations } from './Matrix42AsqlOperations';
 import { matrix42UserFields, matrix42UserOperations } from './Matrix42UserOperations';
 import { matrix42TicketFields, matrix42TicketOperations } from './Matrix42TicketOperations';
-import { getFragments } from './Matrix42AsqlFunctions';
+import {
+	addFragment,
+	addObject,
+	deleteFragment,
+	deleteObject,
+	getFragments,
+	getObject,
+	updateFragment,
+	updateObject
+} from './Matrix42AsqlFunctions';
 import { matrix42ApiRequest } from './GenericFunctions';
 import {closeTicket, createTicket, forwardTicket, getTicketDetails, transformTicket} from "./Matrix42TicketFunctions";
 
@@ -439,6 +448,41 @@ export class Matrix42 implements INodeType {
 					// asql:getFragments
 					// ----------------------------------
 					returnData = await getFragments.call(this, i);
+				} else if (operation === 'addFragment') {
+					// ----------------------------------
+					// asql:addFragment
+					// ----------------------------------
+					returnData = await addFragment.call(this, i);
+				} else if (operation === 'updateFragment') {
+					// ----------------------------------
+					// asql:updateFragment
+					// ----------------------------------
+					returnData = await updateFragment.call(this, i);
+				} else if (operation === 'deleteFragment') {
+					// ----------------------------------
+					// asql:deleteFragment
+					// ----------------------------------
+					returnData = await deleteFragment.call(this, i);
+				} else if (operation === 'addObject') {
+					// ----------------------------------
+					// asql:addObject
+					// ----------------------------------
+					returnData = await addObject.call(this, i);
+				} else if (operation === 'getObject') {
+					// ----------------------------------
+					// asql:getObject
+					// ----------------------------------
+					returnData = await getObject.call(this, i);
+				} else if (operation === 'updateObject') {
+					// ----------------------------------
+					// asql:updateObject
+					// ----------------------------------
+					returnData = await updateObject.call(this, i);
+				} else if (operation === 'deleteObject') {
+					// ----------------------------------
+					// asql:deleteObject
+					// ----------------------------------
+					returnData = await deleteObject.call(this, i);
 				}
 			}
 

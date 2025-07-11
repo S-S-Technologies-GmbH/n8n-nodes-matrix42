@@ -11,18 +11,19 @@ export const matrix42TicketOperations: INodeProperties[] = [
 				resource: ['ticket'],
 			},
 		},
+		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 		options: [
-			{
-				name: 'Close Ticket',
-				value: 'closeTicket',
-				description: 'Close a ticket',
-				action: 'Close ticket',
-			},
 			{
 				name: 'Create Ticket',
 				value: 'createTicket',
 				description: 'Create a ticket',
 				action: 'Create a ticket',
+			},
+			{
+				name: 'Close Ticket',
+				value: 'closeTicket',
+				description: 'Close a ticket',
+				action: 'Close ticket',
 			},
 			{
 				name: 'Forward Ticket',
@@ -31,16 +32,16 @@ export const matrix42TicketOperations: INodeProperties[] = [
 				action: 'Forward ticket',
 			},
 			{
-				name: 'Get Ticket Details',
-				value: 'getTicketDetails',
-				description: 'Get a tickets details',
-				action: 'Get ticket details',
-			},
-			{
 				name: 'Transform Ticket',
 				value: 'transformTicket',
 				description: 'Transform a ticket',
 				action: 'Transform a ticket',
+			},
+			{
+				name: 'Get Ticket Details',
+				value: 'getTicketDetails',
+				description: 'Get a tickets details',
+				action: 'Get ticket details',
 			}
 		],
 		default: 'createTicket',
@@ -200,7 +201,7 @@ const createTicketOperation: INodeProperties[] = [
 				description: 'High Priority'
 			},
 		],
-		default: 2,
+		default: -1,
 		description: 'The Priority of the Ticket. It can be automatically calculated based on the urgency and impact.',
 		displayOptions: {
 			show: {
