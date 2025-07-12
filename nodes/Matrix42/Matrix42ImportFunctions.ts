@@ -8,8 +8,6 @@ export async function executeImportDefinition(this: IExecuteFunctions, i: number
 
 	const qs: IDataObject = {};
 
-	// const newGuid = crypto.randomUUID();
-
 	let body = {
 		Parameters: [],
 		SequenceId: sequenceEoid,
