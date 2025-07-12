@@ -26,12 +26,6 @@ export const matrix42TicketOperations: INodeProperties[] = [
 				action: 'Close ticket',
 			},
 			{
-				name: 'Forward Ticket',
-				value: 'forwardTicket',
-				description: 'Forward a ticket',
-				action: 'Forward ticket',
-			},
-			{
 				name: 'Transform Ticket',
 				value: 'transformTicket',
 				description: 'Transform a ticket',
@@ -197,7 +191,7 @@ const createTicketOperation: INodeProperties[] = [
 			loadOptionsDependsOn: ['category'],
 		},
 		default: '',
-		description: 'The Responsible Role of the Ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'The Responsible Role of the Ticket. If "None" is selected, the Category default will be used. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		displayOptions: {
 			show: {
 				operation: ['createTicket']
@@ -213,7 +207,7 @@ const createTicketOperation: INodeProperties[] = [
 			loadOptionsMethod: 'getUsers',
 		},
 		default: '',
-		description: 'The Creator of the Ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'The Creator of the Ticket. If "None" is selected, it will be left blank. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		displayOptions: {
 			show: {
 				operation: ['createTicket']
@@ -229,7 +223,7 @@ const createTicketOperation: INodeProperties[] = [
 			loadOptionsMethod: 'getUsers',
 		},
 		default: '',
-		description: 'The Initiator of the Ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'The Initiator of the Ticket. If "None" is selected, it will be left blank. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		displayOptions: {
 			show: {
 				operation: ['createTicket']
@@ -245,7 +239,7 @@ const createTicketOperation: INodeProperties[] = [
 			loadOptionsMethod: 'getUsers',
 		},
 		default: '',
-		description: 'The Responsible User of the Ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'The Responsible User of the Ticket. If "None" is selected, it will be left blank. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		displayOptions: {
 			show: {
 				operation: ['createTicket']
@@ -261,7 +255,7 @@ const createTicketOperation: INodeProperties[] = [
 			loadOptionsMethod: 'getTicketSlas',
 		},
 		default: '',
-		description: 'The SLA of the Ticket. It can be automatically calculated. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'The SLA of the Ticket. If "None" is selected, the Category default will be used. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 		displayOptions: {
 			show: {
 				operation: ['createTicket']
@@ -537,27 +531,131 @@ const closeTicketOperation: INodeProperties[] = [
 
 const transformTicketOperation: INodeProperties[] = [
 	{
-		displayName: 'Ticket Type',
-		name: 'ticketType',
-		type: 'options',
+		displayName: 'Ticket EOID',
+		name: 'ticketEoid',
+		type: 'string',
+		default: '',
+		description: 'The Expression-ObjectID of the Ticket/Service Request/Incident',
 		displayOptions: {
 			show: {
-				operation: ['transformTicket'],
+				operation: ['transformTicket']
 			},
 		},
+		required: true,
+	},
+	{
+		displayName: 'Source Type',
+		name: 'sourceTypeName',
+		type: 'options',
 		options: [
 			{
+				name: 'Ticket',
+				value: "SPSActivityTypeTicket",
+			},
+			{
 				name: 'Service Request',
-				value: 'serviceRequest',
-				description: 'Perform operation on SPSActivityClassBase with type Service Request',
+				value: "SPSActivityTypeServiceRequest",
 			},
 			{
 				name: 'Incident',
-				value: 'incident',
-				description: 'Perform operation on SPSActivityClassBase with type Incident',
+				value: "SPSActivityTypeIncident",
 			}
 		],
-		default: 'serviceRequest',
+		default: 'SPSActivityTypeTicket',
+		description: 'The Source Type of the Activity (what type is the activity)',
+		displayOptions: {
+			show: {
+				operation: ['transformTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Target Type',
+		name: 'targetTypeName',
+		type: 'options',
+		options: [
+			{
+				name: 'Service Request',
+				value: "SPSActivityTypeServiceRequest",
+			},
+			{
+				name: 'Incident',
+				value: "SPSActivityTypeIncident",
+			}
+		],
+		default: 'SPSActivityTypeServiceRequest',
+		description: 'The Target Type of the Activity (what will the activity be transformed to)',
+		displayOptions: {
+			show: {
+				operation: ['transformTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Category Name or ID',
+		name: 'category',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getTicketCategories',
+		},
+		default: '',
+		description: 'The Category of the Ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		displayOptions: {
+			show: {
+				operation: ['transformTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'SLA Name or ID',
+		name: 'sla',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getTicketSlas',
+		},
+		default: '',
+		description: 'The SLA of the Ticket. If "None" is selected, it will not be changed. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		displayOptions: {
+			show: {
+				operation: ['transformTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'OLA Name or ID',
+		name: 'ola',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getTicketOlas',
+		},
+		default: '',
+		description: 'The OLA of the Ticket. If "None" is selected, it will not be changed. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		displayOptions: {
+			show: {
+				operation: ['transformTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Recipient Role Name or ID',
+		name: 'recipientRole',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getTicketRoles',
+			loadOptionsDependsOn: ['category'],
+		},
+		default: '',
+		description: 'The Responsible Role of the Ticket. If "None" is selected, it will not be changed. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		displayOptions: {
+			show: {
+				operation: ['transformTicket']
+			},
+		},
 		required: true,
 	}
 ];

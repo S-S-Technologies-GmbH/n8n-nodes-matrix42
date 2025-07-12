@@ -24,7 +24,7 @@ import {
 	updateObject
 } from './Matrix42AsqlFunctions';
 import { matrix42ApiRequest } from './GenericFunctions';
-import {closeTicket, createTicket, forwardTicket, transformTicket} from "./Matrix42TicketFunctions";
+import {closeTicket, createTicket, transformTicket} from "./Matrix42TicketFunctions";
 
 export class Matrix42 implements INodeType {
 	description: INodeTypeDescription = {
@@ -165,7 +165,7 @@ export class Matrix42 implements INodeType {
 					return 0;
 				});
 
-				const emptyUser = { name: 'None', value: '00000000-0000-0000-0000-000000000000' };
+				const emptyUser = { name: 'None (Check Description)', value: '00000000-0000-0000-0000-000000000000' };
 				returnData.unshift(emptyUser)
 
 				return returnData;
@@ -378,7 +378,7 @@ export class Matrix42 implements INodeType {
 					returnData.unshift(defaultOption);
 				}
 
-				const emptyRole = { name: 'Use Category Default', value: '00000000-0000-0000-0000-000000000000' };
+				const emptyRole = { name: 'None (Check Description)', value: '00000000-0000-0000-0000-000000000000' };
 				returnData.unshift(emptyRole)
 
 				return returnData;
@@ -423,8 +423,53 @@ export class Matrix42 implements INodeType {
 					return 0;
 				});
 
-				const defaultSla = { name: 'Use Category Default', value: '00000000-0000-0000-0000-000000000000' };
+				const defaultSla = { name: 'None (Check Description)', value: '00000000-0000-0000-0000-000000000000' };
 				returnData.unshift(defaultSla)
+
+				return returnData;
+			},
+			async getTicketOlas(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const responseData = await matrix42ApiRequest.call(
+					this,
+					'GET',
+					'/data/fragments/SVCServiceLevelAgreementClassBase',
+					{},
+					{
+						where: 'SLA_Type = 20',
+						columns: "ID, [Expression-ObjectID], Name, FulfillmentResponsibleRole",
+					}
+				);
+
+				if (responseData === undefined) {
+					throw new NodeApiError(this.getNode(), responseData as JsonObject, {
+						message:  'No data got returned',
+					});
+				}
+
+				const returnData: INodePropertyOptions[] = [];
+
+				for (const olaData of responseData) {
+					const olaName = olaData.Name;
+					const olaId = olaData.ID;
+
+					returnData.push({
+						name: olaName,
+						value: olaId,
+					});
+				}
+
+				returnData.sort((a, b) => {
+					if (a.name < b.name) {
+						return -1;
+					}
+					if (a.name > b.name) {
+						return 1;
+					}
+					return 0;
+				});
+
+				const defaultOla = { name: 'None (Check Description)', value: '00000000-0000-0000-0000-000000000000' };
+				returnData.unshift(defaultOla)
 
 				return returnData;
 			},
@@ -578,11 +623,6 @@ export class Matrix42 implements INodeType {
 					// ticket:closeTicket
 					// ----------------------------------
 					returnData = await closeTicket.call(this, i);
-				} else if (operation === 'forwardTicket') {
-					// ----------------------------------
-					// ticket:forwardTicket
-					// ----------------------------------
-					returnData = await forwardTicket.call(this, i);
 				} else if (operation === 'transformTicket') {
 					// ----------------------------------
 					// ticket:transformTicket
@@ -590,8 +630,6 @@ export class Matrix42 implements INodeType {
 					returnData = await transformTicket.call(this, i);
 				}
 			}
-
-
 		}
 
 		const executionData = this.helpers.returnJsonArray(returnData);

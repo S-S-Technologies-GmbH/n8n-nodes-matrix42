@@ -103,14 +103,31 @@ export async function closeTicket(this: IExecuteFunctions, i: number) {
 	return returnData;
 }
 
-export async function forwardTicket(this: IExecuteFunctions, i: number) {
-	const returnData: IDataObject[] = [];
-
-	return returnData;
-}
-
 export async function transformTicket(this: IExecuteFunctions, i: number) {
-	const returnData: IDataObject[] = [];
+
+	const ticketEoid = this.getNodeParameter('ticketEoid', i) as string;
+	const sourceTypeName = this.getNodeParameter('sourceTypeName', i) as string;
+	const targetTypeName = this.getNodeParameter('targetTypeName', i) as string;
+	const category = this.getNodeParameter('category', i) as string;
+	const sla = this.getNodeParameter('sla', i) as string;
+	const ola = this.getNodeParameter('ola', i) as string;
+	const recipientRole = this.getNodeParameter('recipientRole', i) as string;
+
+	const qs: IDataObject = {};
+
+	let body = {
+		ObjectIds: [ticketEoid],
+		SourceTypeName: sourceTypeName,
+		TargetTypeName: targetTypeName,
+		Category: category,
+		Sla: sla,
+		Ola: ola,
+		RecipientRole: recipientRole,
+	};
+
+	await matrix42ApiRequest.call(this, 'POST', '/ticket/transform', body, qs);
+
+	const returnData: IDataObject[] = [{Message: "Success"}];
 
 	return returnData;
 }
