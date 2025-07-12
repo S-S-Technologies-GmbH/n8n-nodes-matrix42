@@ -25,6 +25,7 @@ import {
 } from './Matrix42AsqlFunctions';
 import { matrix42ApiRequest } from './GenericFunctions';
 import {closeTicket, createTicket, transformTicket} from "./Matrix42TicketFunctions";
+import {executeImportDefinition} from "./Matrix42ImportFunctions";
 
 export class Matrix42 implements INodeType {
 	description: INodeTypeDescription = {
@@ -91,20 +92,12 @@ export class Matrix42 implements INodeType {
 						value: 'asql',
 					},
 					{
-						name: 'Asset',
-						value: 'asset',
-					},
-					{
 						name: 'Import',
 						value: 'import',
 					},
 					{
 						name: 'Ticket',
 						value: 'ticket',
-					},
-					{
-						name: 'User',
-						value: 'user',
 					},
 				],
 				default: 'ticket',
@@ -555,6 +548,47 @@ export class Matrix42 implements INodeType {
 				});
 
 				return returnData;
+			},
+			async getImportDefinitions(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const responseData = await matrix42ApiRequest.call(
+					this,
+					'GET',
+					'/data/fragments/GDIEImportClassBase',
+					{},
+					{
+						columns: "ID, Name, [Expression-ObjectID] as eoid",
+					}
+				);
+
+				if (responseData === undefined) {
+					throw new NodeApiError(this.getNode(), responseData as JsonObject, {
+						message:  'No data got returned',
+					});
+				}
+
+				const returnData: INodePropertyOptions[] = [];
+
+				for (const importDefinitionsData of responseData) {
+					const importDefinitionName = importDefinitionsData.Name;
+					const importDefinitionValue = importDefinitionsData.eoid;
+
+					returnData.push({
+						name: importDefinitionName,
+						value: importDefinitionValue,
+					});
+				}
+
+				returnData.sort((a, b) => {
+					if (a.name < b.name) {
+						return -1;
+					}
+					if (a.name > b.name) {
+						return 1;
+					}
+					return 0;
+				});
+
+				return returnData;
 			}
 		}
 	};
@@ -628,6 +662,15 @@ export class Matrix42 implements INodeType {
 					// ticket:transformTicket
 					// ----------------------------------
 					returnData = await transformTicket.call(this, i);
+				}
+			}
+
+			if (resource === 'import') {
+				if (operation === 'executeImportDefinition') {
+					// ----------------------------------
+					// import:executeImportDefinition
+					// ----------------------------------
+					returnData = await executeImportDefinition.call(this, i);
 				}
 			}
 		}

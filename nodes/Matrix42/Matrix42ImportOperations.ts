@@ -13,17 +13,36 @@ export const matrix42ImportOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Run Importsequence',
-				value: 'runImport',
-				description: 'Run an Importsequence',
-				action: 'Run import sequence',
+				name: 'Execute Import Definition',
+				value: 'executeImportDefinition',
+				description: 'Execute an Import Definition',
+				action: 'Execute import definition',
 			}
 		],
-		default: 'runImport',
+		default: 'executeImportDefinition',
 	},
 ];
 
+const executeImportDefinitionOperation: INodeProperties[] = [
+	{
+		displayName: 'Sequence Name or ID',
+		name: 'sequenceEoid',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getImportDefinitions',
+		},
+		default: '',
+		description: 'The Name or Expression-ObjectID of the Import Definition. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		displayOptions: {
+			show: {
+				operation: ['executeImportDefinition']
+			},
+		},
+		required: true,
+	},
+]
 
 export const matrix42ImportFields: INodeProperties[] = [
+	...executeImportDefinitionOperation
 ];
 
