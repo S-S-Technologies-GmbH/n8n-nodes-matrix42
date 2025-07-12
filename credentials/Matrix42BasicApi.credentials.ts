@@ -12,8 +12,7 @@ export class Matrix42BasicApi implements ICredentialType {
 
 	displayName = 'Matrix42 Basic Auth API';
 
-	// todo
-	documentationUrl = 'https://your-docs-url';
+	documentationUrl = 'https://help.matrix42.com/030_ESMP/030_INT/Business_Processes_and_API_Integrations/Web_Services%3A_Authentication_types';
 
 	properties: INodeProperties[] = [
 		{
@@ -25,7 +24,6 @@ export class Matrix42BasicApi implements ICredentialType {
 			required: true,
 		},
 		{
-			// todo add hint or extra field for domain
 			displayName: 'User',
 			name: 'user',
 			type: 'string',

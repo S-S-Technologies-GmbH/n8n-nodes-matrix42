@@ -10,8 +10,7 @@ export class Matrix42TokenApi implements ICredentialType {
 
 	displayName = 'Matrix42 Webservice Token Auth API';
 
-	// todo
-	documentationUrl = 'https://your-docs-url';
+	documentationUrl = 'https://help.matrix42.com/030_ESMP/030_INT/Business_Processes_and_API_Integrations/Web_Services%3A_Authentication_types';
 
 	properties: INodeProperties[] = [
 		{
