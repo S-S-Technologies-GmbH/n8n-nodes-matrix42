@@ -36,32 +36,10 @@ export const matrix42TicketOperations: INodeProperties[] = [
 				value: 'transformTicket',
 				description: 'Transform a ticket',
 				action: 'Transform a ticket',
-			},
-			{
-				name: 'Get Ticket Details',
-				value: 'getTicketDetails',
-				description: 'Get a tickets details',
-				action: 'Get ticket details',
 			}
 		],
 		default: 'createTicket',
 	},
-];
-
-const closeTicketOperation: INodeProperties[] = [
-	// {
-	// 	displayName: 'Ticket ID',
-	// 	name: 'ticketId',
-	// 	type: 'string',
-	// 	default: '',
-	// 	description: 'The SPSActivityClassBase ID of the Ticket',
-	// 	displayOptions: {
-	// 		show: {
-	// 			operation: ['getTicketDetails']
-	// 		},
-	// 	},
-	// 	required: true,
-	// }
 ];
 
 const createTicketOperation: INodeProperties[] = [
@@ -339,20 +317,222 @@ const createTicketOperation: INodeProperties[] = [
 	// },
 ];
 
-const getTicketDetailsOperation: INodeProperties[] = [
+const closeTicketOperation: INodeProperties[] = [
 	{
-		displayName: 'Ticket ID',
-		name: 'ticketId',
+		displayName: 'Ticket EOID',
+		name: 'ticketEoid',
 		type: 'string',
 		default: '',
-		description: 'The SPSActivityClassBase ID of the Ticket',
+		description: 'The Expression-ObjectID of the Ticket/Service Request/Incident',
 		displayOptions: {
 			show: {
-				operation: ['getTicketDetails']
+				operation: ['closeTicket']
 			},
 		},
 		required: true,
-	}
+	},
+	{
+		displayName: 'Close Related Incidents',
+		name: 'closeRelatedIncidents',
+		type: 'boolean',
+		default: false,
+		description: 'Whether related incidents will be automatically closed',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Close Reason Name or ID',
+		name: 'reason',
+		type: 'options',
+		options: [
+			{
+				name: 'Directly Solved',
+				value: 408,
+			},
+		],
+		typeOptions: {
+			loadOptionsMethod: 'getTicketCloseReasons',
+		},
+		default: 408,
+		description: 'Closing reason for the Ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Error Type Name or ID',
+		name: 'errorType',
+		type: 'options',
+		options: [
+			{
+				name: 'Unknown',
+				value: 0,
+			},
+		],
+		typeOptions: {
+			loadOptionsMethod: 'getTicketCloseErrorTypes',
+		},
+		default: 0,
+		description: 'Error Type for the Ticket. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Solution',
+		name: 'comments',
+		type: 'string',
+		typeOptions: {
+			editor: 'htmlEditor',
+		},
+		default: '',
+		description: 'Solution for Closing Ticket in HTML',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Services Availability',
+		name: 'servicesAvailability',
+		type: 'options',
+		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
+		options: [
+			{
+				name: 'Unknown',
+				value: 0,
+			},
+			{
+				name: 'Available',
+				value: 10,
+			},
+			{
+				name: 'Partial Available',
+				value: 20,
+			},
+			{
+				name: 'Unavailable (Planned)',
+				value: 30,
+			},
+			{
+				name: 'Unavailable (Unplanned)',
+				value: 40,
+			},
+		],
+		default: 10,
+		description: 'Set the affected Service Availability while ticket been processed',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Assets Availability',
+		name: 'assetsAvailability',
+		type: 'options',
+		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
+		options: [
+			{
+				name: 'Unknown',
+				value: 0,
+				description: 'Calculate Priority'
+			},
+			{
+				name: 'Available',
+				value: 10,
+				description: 'Without Priority'
+			},
+			{
+				name: 'Partial Available',
+				value: 20,
+				description: 'Low Priority'
+			},
+			{
+				name: 'Unavailable(Planned)',
+				value: 30,
+				description: 'Medium Priority'
+			},
+			{
+				name: 'Unavailable(Unplanned)',
+				value: 40,
+				description: 'High Priority'
+			},
+		],
+		default: 10,
+		description: 'Set the affected Service Availability while ticket been processed',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Send Mail To Initiator',
+		name: 'sendMailToInitiator',
+		type: 'boolean',
+		default: true,
+		description: 'Whether the notification mail will be sent to the initiator',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Notify Responsible',
+		name: 'notifyResponsible',
+		type: 'boolean',
+		default: true,
+		description: 'Whether the notification mail will be sent to the responsible',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Send Mail To Users',
+		name: 'sendMailToUsers',
+		type: 'boolean',
+		default: true,
+		description: 'Whether the notification mail will be sent to the Ticket attached users',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
+	{
+		displayName: 'Send Mail To Related Responsible Users',
+		name: 'sendMailToRelatedResponsibleUsers',
+		type: 'boolean',
+		default: true,
+		description: 'Whether the notification mail will be sent to the related tickets responsible users',
+		displayOptions: {
+			show: {
+				operation: ['closeTicket']
+			},
+		},
+		required: true,
+	},
 ];
 
 const transformTicketOperation: INodeProperties[] = [
@@ -360,7 +540,6 @@ const transformTicketOperation: INodeProperties[] = [
 		displayName: 'Ticket Type',
 		name: 'ticketType',
 		type: 'options',
-		// noDataExpression: true,
 		displayOptions: {
 			show: {
 				operation: ['transformTicket'],
@@ -386,7 +565,6 @@ const transformTicketOperation: INodeProperties[] = [
 export const matrix42TicketFields: INodeProperties[] = [
 	...closeTicketOperation,
 	...createTicketOperation,
-	...getTicketDetailsOperation,
 	...transformTicketOperation,
 ];
 

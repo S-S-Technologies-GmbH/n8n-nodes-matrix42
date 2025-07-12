@@ -26,7 +26,7 @@ import {
 	updateObject
 } from './Matrix42AsqlFunctions';
 import { matrix42ApiRequest } from './GenericFunctions';
-import {closeTicket, createTicket, forwardTicket, getTicketDetails, transformTicket} from "./Matrix42TicketFunctions";
+import {closeTicket, createTicket, forwardTicket, transformTicket} from "./Matrix42TicketFunctions";
 
 export class Matrix42 implements INodeType {
 	description: INodeTypeDescription = {
@@ -438,6 +438,89 @@ export class Matrix42 implements INodeType {
 
 				return returnData;
 			},
+			async getTicketCloseReasons(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const responseData = await matrix42ApiRequest.call(
+					this,
+					'GET',
+					'/data/fragments/SPSCommonPickupObjectStateReason',
+					{},
+					{
+						where: 'StateGroup = 7 AND State = 204',
+						columns: "ID, Position, Value, DisplayString, StateGroup",
+					}
+				);
+
+				if (responseData === undefined) {
+					throw new NodeApiError(this.getNode(), responseData as JsonObject, {
+						message:  'No data got returned',
+					});
+				}
+
+				const returnData: INodePropertyOptions[] = [];
+
+				for (const closeReasonData of responseData) {
+					const closeReasonName = closeReasonData.DisplayString;
+					const closeReasonValue = closeReasonData.Value;
+
+					returnData.push({
+						name: closeReasonName,
+						value: closeReasonValue,
+					});
+				}
+
+				returnData.sort((a, b) => {
+					if (a.name < b.name) {
+						return -1;
+					}
+					if (a.name > b.name) {
+						return 1;
+					}
+					return 0;
+				});
+
+				return returnData;
+			},
+			async getTicketCloseErrorTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const responseData = await matrix42ApiRequest.call(
+					this,
+					'GET',
+					'/data/fragments/SVMActivityPickupErrorType',
+					{},
+					{
+						columns: "ID, Position, Value, DisplayString",
+					}
+				);
+
+				if (responseData === undefined) {
+					throw new NodeApiError(this.getNode(), responseData as JsonObject, {
+						message:  'No data got returned',
+					});
+				}
+
+				const returnData: INodePropertyOptions[] = [];
+
+				for (const errorTypeData of responseData) {
+					const errorTypeName = errorTypeData.DisplayString;
+					const errorTypeValue = errorTypeData.Value;
+
+					returnData.push({
+						name: errorTypeName,
+						value: errorTypeValue,
+					});
+				}
+
+				returnData.sort((a, b) => {
+					if (a.name < b.name) {
+						return -1;
+					}
+					if (a.name > b.name) {
+						return 1;
+					}
+					return 0;
+				});
+
+				return returnData;
+			}
 		}
 	};
 
@@ -495,26 +578,21 @@ export class Matrix42 implements INodeType {
 			}
 
 			if (resource === 'ticket') {
-				if (operation === 'closeTicket') {
-					// ----------------------------------
-					// ticket:closeTicket
-					// ----------------------------------
-					returnData = await closeTicket.call(this, i);
-				} else if (operation === 'createTicket') {
+				if (operation === 'createTicket') {
 					// ----------------------------------
 					// ticket:createTicket
 					// ----------------------------------
 					returnData = await createTicket.call(this, i);
+				} else if (operation === 'closeTicket') {
+					// ----------------------------------
+					// ticket:closeTicket
+					// ----------------------------------
+					returnData = await closeTicket.call(this, i);
 				} else if (operation === 'forwardTicket') {
 					// ----------------------------------
 					// ticket:forwardTicket
 					// ----------------------------------
 					returnData = await forwardTicket.call(this, i);
-				} else if (operation === 'getTicketDetails') {
-					// ----------------------------------
-					// ticket:getTicketDetails
-					// ----------------------------------
-					returnData = await getTicketDetails.call(this, i);
 				} else if (operation === 'transformTicket') {
 					// ----------------------------------
 					// ticket:transformTicket

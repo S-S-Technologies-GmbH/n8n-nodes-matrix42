@@ -1,12 +1,6 @@
 import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
 import { matrix42ApiRequest } from './GenericFunctions';
 
-export async function closeTicket(this: IExecuteFunctions, i: number) {
-	const returnData: IDataObject[] = [];
-
-	return returnData;
-}
-
 export async function createTicket(this: IExecuteFunctions, i: number) {
 	const returnData: IDataObject[] = [];
 
@@ -73,13 +67,43 @@ export async function createTicket(this: IExecuteFunctions, i: number) {
 	return returnData;
 }
 
-export async function forwardTicket(this: IExecuteFunctions, i: number) {
-	const returnData: IDataObject[] = [];
+export async function closeTicket(this: IExecuteFunctions, i: number) {
+	const ticketEoid = this.getNodeParameter('ticketEoid', i) as string;
+	const closeRelatedIncidents = this.getNodeParameter('closeRelatedIncidents', i) as boolean;
+	const reason = this.getNodeParameter('reason', i) as number;
+	const errorType = this.getNodeParameter('errorType', i) as number;
+	const comments = this.getNodeParameter('comments', i) as string;
+	const servicesAvailability = this.getNodeParameter('servicesAvailability', i) as number;
+	const assetsAvailability = this.getNodeParameter('assetsAvailability', i) as number;
+	const sendMailToInitiator = this.getNodeParameter('sendMailToInitiator', i) as boolean;
+	const notifyResponsible = this.getNodeParameter('notifyResponsible', i) as boolean;
+	const sendMailToUsers = this.getNodeParameter('sendMailToUsers', i) as boolean;
+	const sendMailToRelatedResponsibleUsers = this.getNodeParameter('sendMailToRelatedResponsibleUsers', i) as boolean;
+
+	const qs: IDataObject = {};
+
+	const body = {
+		ObjectIds: [ticketEoid],
+		CloseRelatedIncidents: closeRelatedIncidents,
+		Reason: reason,
+		Comments: comments,
+		ServicesAvailability: servicesAvailability,
+		AssetsAvailability: assetsAvailability,
+		SendMailToUsers: sendMailToUsers,
+		ErrorType: errorType,
+		SendMailToInitiator: sendMailToInitiator,
+		NotifyResponsible: notifyResponsible,
+		SendMailToRelatedResponsibleUsers: sendMailToRelatedResponsibleUsers
+	};
+
+	await matrix42ApiRequest.call(this, 'POST', '/ticket/close', body, qs);
+
+	const returnData: IDataObject[] = [{Message: "Success"}];
 
 	return returnData;
 }
 
-export async function getTicketDetails(this: IExecuteFunctions, i: number) {
+export async function forwardTicket(this: IExecuteFunctions, i: number) {
 	const returnData: IDataObject[] = [];
 
 	return returnData;

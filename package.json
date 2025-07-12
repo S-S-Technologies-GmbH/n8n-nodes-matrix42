@@ -38,7 +38,6 @@
       "dist/credentials/Matrix42TokenApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/HttpBin/HttpBin.node.js",
       "dist/nodes/Matrix42/Matrix42.node.js"
     ]
   },
