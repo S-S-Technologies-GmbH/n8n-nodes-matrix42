@@ -12,6 +12,7 @@ export class Matrix42BasicApi implements ICredentialType {
 
 	displayName = 'Matrix42 Basic Auth API';
 
+	// todo
 	documentationUrl = 'https://your-docs-url';
 
 	properties: INodeProperties[] = [
@@ -20,7 +21,7 @@ export class Matrix42BasicApi implements ICredentialType {
 			name: 'serverUrl',
 			type: 'string',
 			default: '',
-			hint: 'The URL of the Matrix42 server. (www.example-matrix42.com)',
+			hint: 'The URL of the Matrix42 server. (https://www.example-matrix42.com)',
 			required: true,
 		},
 		{
@@ -55,9 +56,9 @@ export class Matrix42BasicApi implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			// todo https
-			baseURL: '=http://{{$credentials?.serverUrl}}',
+			baseURL: '={{$credentials?.serverUrl}}',
 			url: '/m42Services/api/configuration/isdevelopermode',
+			skipSslCertificateValidation: true,
 		},
 	};
 }

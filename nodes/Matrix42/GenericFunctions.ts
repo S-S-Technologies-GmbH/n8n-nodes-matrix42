@@ -23,9 +23,9 @@ export async function matrix42ApiRequest(
 		method,
 		body: method === 'GET' || method === 'HEAD' || method === 'DELETE' ? null : body,
 		qs: query,
-		// todo https
-		url: uri || `http://${serverUrl}/m42Services/api${endpoint}`,
+		url: uri || `${serverUrl}/m42Services/api${endpoint}`,
 		json: true,
+		skipSslCertificateValidation: true
 	};
 
 	if (options.body === null) {

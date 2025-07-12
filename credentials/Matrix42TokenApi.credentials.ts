@@ -10,6 +10,7 @@ export class Matrix42TokenApi implements ICredentialType {
 
 	displayName = 'Matrix42 Webservice Token Auth API';
 
+	// todo
 	documentationUrl = 'https://your-docs-url';
 
 	properties: INodeProperties[] = [
@@ -28,7 +29,7 @@ export class Matrix42TokenApi implements ICredentialType {
 			name: 'serverUrl',
 			type: 'string',
 			default: '',
-			hint: 'The URL of the Matrix42 server. (www.example-matrix42.com)',
+			hint: 'The URL of the Matrix42 server. (https://www.example-matrix42.com)',
 			required: true,
 		},
 		{
@@ -47,8 +48,8 @@ export class Matrix42TokenApi implements ICredentialType {
 	async preAuthentication(this: IHttpRequestHelper, credentials: ICredentialDataDecryptedObject) {
 		const { RawToken } = (await this.helpers.httpRequest({
 			method: 'POST',
-			// todo https
-			url: `http://${credentials.serverUrl}/m42Services/api/ApiToken/GenerateAccessTokenFromApiToken`,
+			url: `${credentials.serverUrl}/m42Services/api/ApiToken/GenerateAccessTokenFromApiToken`,
+			skipSslCertificateValidation: true,
 			headers: {
 				'Content-Type': 'application/json',
 				'Authorization': `Bearer ${credentials.webserviceToken}`,
@@ -69,9 +70,9 @@ export class Matrix42TokenApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			method: "GET",
-			// todo https
-			baseURL: '=http://{{$credentials?.serverUrl}}',
+			baseURL: '={{$credentials?.serverUrl}}',
 			url: '/m42Services/api/configuration/isdevelopermode',
+			skipSslCertificateValidation: true
 		},
 	};
 }

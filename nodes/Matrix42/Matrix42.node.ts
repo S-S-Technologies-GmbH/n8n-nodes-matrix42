@@ -10,10 +10,8 @@ import {
 	NodeApiError,
 } from 'n8n-workflow';
 import { NodeConnectionType } from 'n8n-workflow';
-import { matrix42AssetFields, matrix42AssetOperations } from './Matrix42AssetOperations';
 import { matrix42ImportFields, matrix42ImportOperations } from './Matrix42ImportOperations';
 import { matrix42AsqlFields, matrix42AsqlOperations } from './Matrix42AsqlOperations';
-import { matrix42UserFields, matrix42UserOperations } from './Matrix42UserOperations';
 import { matrix42TicketFields, matrix42TicketOperations } from './Matrix42TicketOperations';
 import {
 	addFragment,
@@ -116,10 +114,6 @@ export class Matrix42 implements INodeType {
 			...matrix42AsqlOperations,
 			...matrix42AsqlFields,
 
-			// Asset
-			...matrix42AssetOperations,
-			...matrix42AssetFields,
-
 			// Import
 			...matrix42ImportOperations,
 			...matrix42ImportFields,
@@ -127,10 +121,6 @@ export class Matrix42 implements INodeType {
 			// Ticket
 			...matrix42TicketOperations,
 			...matrix42TicketFields,
-
-			// User
-			...matrix42UserOperations,
-			...matrix42UserFields,
 		],
 	};
 
