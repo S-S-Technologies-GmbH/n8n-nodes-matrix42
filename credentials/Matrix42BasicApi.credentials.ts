@@ -55,7 +55,7 @@ export class Matrix42BasicApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{$credentials?.serverUrl}}',
-			url: '/m42Services/api/configuration/isdevelopermode',
+			url: '/m42Services/api/data/fragments/SPSGlobalConfigurationClassBase',
 			skipSslCertificateValidation: true,
 		},
 	};

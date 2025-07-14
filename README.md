@@ -90,7 +90,7 @@ On execution, the node:
 
 -   **Node.js**: v22.17.0 or higher.
 
--   **Matrix42 ESMP API**: Tested with Matrix42 12.1.2.5325
+-   **Matrix42 ESMP API**: Tested with Matrix42 12.1.2.5325.
 
 ## Resources
 

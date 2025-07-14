@@ -68,10 +68,9 @@ export class Matrix42TokenApi implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			method: "GET",
 			baseURL: '={{$credentials?.serverUrl}}',
-			url: '/m42Services/api/configuration/isdevelopermode',
-			skipSslCertificateValidation: true
+			url: '/m42Services/api/data/fragments/SPSGlobalConfigurationClassBase',
+			skipSslCertificateValidation: true,
 		},
 	};
 }
