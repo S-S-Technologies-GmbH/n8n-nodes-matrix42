@@ -599,7 +599,8 @@ export class Matrix42 implements INodeType {
 		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
 
-		let returnData: IDataObject[] = [];
+		const returnData: INodeExecutionData[] = [];
+		let responseData: IDataObject[] = [];
 
 		for (let i = 0; i < items.length; i++) {
 			try {
@@ -608,42 +609,42 @@ export class Matrix42 implements INodeType {
 						// ----------------------------------
 						// asql:getFragments
 						// ----------------------------------
-						returnData = await getFragments.call(this, i);
+						responseData = await getFragments.call(this, i);
 					} else if (operation === 'addFragment') {
 						// ----------------------------------
 						// asql:addFragment
 						// ----------------------------------
-						returnData = await addFragment.call(this, i);
+						responseData = await addFragment.call(this, i);
 					} else if (operation === 'updateFragment') {
 						// ----------------------------------
 						// asql:updateFragment
 						// ----------------------------------
-						returnData = await updateFragment.call(this, i);
+						responseData = await updateFragment.call(this, i);
 					} else if (operation === 'deleteFragment') {
 						// ----------------------------------
 						// asql:deleteFragment
 						// ----------------------------------
-						returnData = await deleteFragment.call(this, i);
+						responseData = await deleteFragment.call(this, i);
 					} else if (operation === 'addObject') {
 						// ----------------------------------
 						// asql:addObject
 						// ----------------------------------
-						returnData = await addObject.call(this, i);
+						responseData = await addObject.call(this, i);
 					} else if (operation === 'getObject') {
 						// ----------------------------------
 						// asql:getObject
 						// ----------------------------------
-						returnData = await getObject.call(this, i);
+						responseData = await getObject.call(this, i);
 					} else if (operation === 'updateObject') {
 						// ----------------------------------
 						// asql:updateObject
 						// ----------------------------------
-						returnData = await updateObject.call(this, i);
+						responseData = await updateObject.call(this, i);
 					} else if (operation === 'deleteObject') {
 						// ----------------------------------
 						// asql:deleteObject
 						// ----------------------------------
-						returnData = await deleteObject.call(this, i);
+						responseData = await deleteObject.call(this, i);
 					}
 				}
 
@@ -652,17 +653,17 @@ export class Matrix42 implements INodeType {
 						// ----------------------------------
 						// ticket:createTicket
 						// ----------------------------------
-						returnData = await createTicket.call(this, i);
+						responseData = await createTicket.call(this, i);
 					} else if (operation === 'closeTicket') {
 						// ----------------------------------
 						// ticket:closeTicket
 						// ----------------------------------
-						returnData = await closeTicket.call(this, i);
+						responseData = await closeTicket.call(this, i);
 					} else if (operation === 'transformTicket') {
 						// ----------------------------------
 						// ticket:transformTicket
 						// ----------------------------------
-						returnData = await transformTicket.call(this, i);
+						responseData = await transformTicket.call(this, i);
 					}
 				}
 
@@ -671,9 +672,16 @@ export class Matrix42 implements INodeType {
 						// ----------------------------------
 						// import:executeImportDefinition
 						// ----------------------------------
-						returnData = await executeImportDefinition.call(this, i);
+						responseData = await executeImportDefinition.call(this, i);
 					}
 				}
+
+				const executionData = this.helpers.constructExecutionMetaData(
+					this.helpers.returnJsonArray(responseData as IDataObject[]),
+					{ itemData: { item: i } },
+				);
+
+				returnData.push(...executionData);
 			} catch (error) {
 				if (this.continueOnFail()) {
 					const exectionErrorWithMetaData = this.helpers.constructExecutionMetaData(
@@ -688,7 +696,6 @@ export class Matrix42 implements INodeType {
 			}
 		}
 
-		const executionData = this.helpers.returnJsonArray(returnData);
-		return [executionData];
+		return [returnData];
 	}
 }
