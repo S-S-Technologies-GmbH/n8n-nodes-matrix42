@@ -12,6 +12,7 @@ export async function matrix42ApiRequest(
 	body: object,
 	query?: IDataObject,
 	uri?: string,
+	contentType: string = 'application/json',
 ): Promise<any> {
 
 	const authenticationMethod = this.getNodeParameter('authentication', 0) as string;
@@ -19,7 +20,9 @@ export async function matrix42ApiRequest(
 	const { serverUrl } = await this.getCredentials<{ serverUrl: string }>(credentialType);
 
 	const options: IHttpRequestOptions = {
-		headers: {},
+		headers: {
+			'Content-Type': contentType,
+		},
 		method,
 		body: method === 'GET' || method === 'HEAD' || method === 'DELETE' ? null : body,
 		qs: query,
