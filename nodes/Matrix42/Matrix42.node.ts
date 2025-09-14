@@ -602,76 +602,89 @@ export class Matrix42 implements INodeType {
 		let returnData: IDataObject[] = [];
 
 		for (let i = 0; i < items.length; i++) {
-			if (resource === 'asql') {
-				if (operation === 'getFragments') {
-					// ----------------------------------
-					// asql:getFragments
-					// ----------------------------------
-					returnData = await getFragments.call(this, i);
-				} else if (operation === 'addFragment') {
-					// ----------------------------------
-					// asql:addFragment
-					// ----------------------------------
-					returnData = await addFragment.call(this, i);
-				} else if (operation === 'updateFragment') {
-					// ----------------------------------
-					// asql:updateFragment
-					// ----------------------------------
-					returnData = await updateFragment.call(this, i);
-				} else if (operation === 'deleteFragment') {
-					// ----------------------------------
-					// asql:deleteFragment
-					// ----------------------------------
-					returnData = await deleteFragment.call(this, i);
-				} else if (operation === 'addObject') {
-					// ----------------------------------
-					// asql:addObject
-					// ----------------------------------
-					returnData = await addObject.call(this, i);
-				} else if (operation === 'getObject') {
-					// ----------------------------------
-					// asql:getObject
-					// ----------------------------------
-					returnData = await getObject.call(this, i);
-				} else if (operation === 'updateObject') {
-					// ----------------------------------
-					// asql:updateObject
-					// ----------------------------------
-					returnData = await updateObject.call(this, i);
-				} else if (operation === 'deleteObject') {
-					// ----------------------------------
-					// asql:deleteObject
-					// ----------------------------------
-					returnData = await deleteObject.call(this, i);
+			try {
+				if (resource === 'asql') {
+					if (operation === 'getFragments') {
+						// ----------------------------------
+						// asql:getFragments
+						// ----------------------------------
+						returnData = await getFragments.call(this, i);
+					} else if (operation === 'addFragment') {
+						// ----------------------------------
+						// asql:addFragment
+						// ----------------------------------
+						returnData = await addFragment.call(this, i);
+					} else if (operation === 'updateFragment') {
+						// ----------------------------------
+						// asql:updateFragment
+						// ----------------------------------
+						returnData = await updateFragment.call(this, i);
+					} else if (operation === 'deleteFragment') {
+						// ----------------------------------
+						// asql:deleteFragment
+						// ----------------------------------
+						returnData = await deleteFragment.call(this, i);
+					} else if (operation === 'addObject') {
+						// ----------------------------------
+						// asql:addObject
+						// ----------------------------------
+						returnData = await addObject.call(this, i);
+					} else if (operation === 'getObject') {
+						// ----------------------------------
+						// asql:getObject
+						// ----------------------------------
+						returnData = await getObject.call(this, i);
+					} else if (operation === 'updateObject') {
+						// ----------------------------------
+						// asql:updateObject
+						// ----------------------------------
+						returnData = await updateObject.call(this, i);
+					} else if (operation === 'deleteObject') {
+						// ----------------------------------
+						// asql:deleteObject
+						// ----------------------------------
+						returnData = await deleteObject.call(this, i);
+					}
 				}
-			}
 
-			if (resource === 'ticket') {
-				if (operation === 'createTicket') {
-					// ----------------------------------
-					// ticket:createTicket
-					// ----------------------------------
-					returnData = await createTicket.call(this, i);
-				} else if (operation === 'closeTicket') {
-					// ----------------------------------
-					// ticket:closeTicket
-					// ----------------------------------
-					returnData = await closeTicket.call(this, i);
-				} else if (operation === 'transformTicket') {
-					// ----------------------------------
-					// ticket:transformTicket
-					// ----------------------------------
-					returnData = await transformTicket.call(this, i);
+				if (resource === 'ticket') {
+					if (operation === 'createTicket') {
+						// ----------------------------------
+						// ticket:createTicket
+						// ----------------------------------
+						returnData = await createTicket.call(this, i);
+					} else if (operation === 'closeTicket') {
+						// ----------------------------------
+						// ticket:closeTicket
+						// ----------------------------------
+						returnData = await closeTicket.call(this, i);
+					} else if (operation === 'transformTicket') {
+						// ----------------------------------
+						// ticket:transformTicket
+						// ----------------------------------
+						returnData = await transformTicket.call(this, i);
+					}
 				}
-			}
 
-			if (resource === 'import') {
-				if (operation === 'executeImportDefinition') {
-					// ----------------------------------
-					// import:executeImportDefinition
-					// ----------------------------------
-					returnData = await executeImportDefinition.call(this, i);
+				if (resource === 'import') {
+					if (operation === 'executeImportDefinition') {
+						// ----------------------------------
+						// import:executeImportDefinition
+						// ----------------------------------
+						returnData = await executeImportDefinition.call(this, i);
+					}
 				}
+			} catch (error) {
+				if (this.continueOnFail()) {
+					const exectionErrorWithMetaData = this.helpers.constructExecutionMetaData(
+						[{ json: { error: error.message } }],
+						{ itemData: { item: i } },
+					);
+					returnData.push(...exectionErrorWithMetaData);
+					continue;
+				}
+
+				throw error;
 			}
 		}
 
