@@ -32,7 +32,7 @@ export async function matrix42ApiRequest(
 		delete options.body;
 	}
 
-  return await this.helpers.requestWithAuthentication.call(this, credentialType, options);
+	return await this.helpers.httpRequestWithAuthentication.call(this, credentialType, options);
 }
 
 export function uuidv4() {
