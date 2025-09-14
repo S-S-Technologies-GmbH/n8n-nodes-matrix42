@@ -56,7 +56,7 @@ export class Matrix42BasicApi implements ICredentialType {
 		request: {
 			baseURL: '={{$credentials?.serverUrl}}',
 			url: '/m42Services/api/data/fragments/SPSGlobalConfigurationClassBase',
-			skipSslCertificateValidation: true,
+			skipSslCertificateValidation: false,
 		},
 	};
 }

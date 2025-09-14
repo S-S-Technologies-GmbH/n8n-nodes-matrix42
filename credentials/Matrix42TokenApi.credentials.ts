@@ -48,7 +48,7 @@ export class Matrix42TokenApi implements ICredentialType {
 		const { RawToken } = (await this.helpers.httpRequest({
 			method: 'POST',
 			url: `${credentials.serverUrl}/m42Services/api/ApiToken/GenerateAccessTokenFromApiToken`,
-			skipSslCertificateValidation: true,
+			skipSslCertificateValidation: false,
 			headers: {
 				'Content-Type': 'application/json',
 				'Authorization': `Bearer ${credentials.webserviceToken}`,
@@ -70,7 +70,7 @@ export class Matrix42TokenApi implements ICredentialType {
 		request: {
 			baseURL: '={{$credentials?.serverUrl}}',
 			url: '/m42Services/api/data/fragments/SPSGlobalConfigurationClassBase',
-			skipSslCertificateValidation: true,
+			skipSslCertificateValidation: false,
 		},
 	};
 }

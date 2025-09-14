@@ -25,7 +25,7 @@ export async function matrix42ApiRequest(
 		qs: query,
 		url: uri || `${serverUrl}/m42Services/api${endpoint}`,
 		json: true,
-		skipSslCertificateValidation: true
+		skipSslCertificateValidation: false
 	};
 
 	if (options.body === null) {
