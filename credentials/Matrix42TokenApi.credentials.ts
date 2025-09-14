@@ -1,7 +1,7 @@
 import {
-	IAuthenticateGeneric, ICredentialDataDecryptedObject,
+	IAuthenticateGeneric,
 	ICredentialTestRequest,
-	ICredentialType, IHttpRequestHelper,
+	ICredentialType,
 	INodeProperties,
 } from 'n8n-workflow';
 
@@ -13,16 +13,6 @@ export class Matrix42TokenApi implements ICredentialType {
 	documentationUrl = 'https://help.matrix42.com/030_ESMP/030_INT/Business_Processes_and_API_Integrations/Web_Services%3A_Authentication_types';
 
 	properties: INodeProperties[] = [
-		{
-			displayName: 'Access Token',
-			name: 'accessToken',
-			type: 'hidden',
-			typeOptions: {
-				expirable: true,
-				password: true,
-			},
-			default: '',
-		},
 		{
 			displayName: 'Server URL',
 			name: 'serverUrl',
@@ -42,26 +32,35 @@ export class Matrix42TokenApi implements ICredentialType {
 			hint: 'The Webservice token of the Matrix42 server.',
 			required: true,
 		},
+		// {
+		// 	displayName: 'Access Token',
+		// 	name: 'accessToken',
+		// 	type: 'hidden',
+		// 	typeOptions: {
+		// 		expirable: true,
+		// 	},
+		// 	default: '',
+		// },
 	];
 
-	async preAuthentication(this: IHttpRequestHelper, credentials: ICredentialDataDecryptedObject) {
-		const { RawToken } = (await this.helpers.httpRequest({
-			method: 'POST',
-			url: `${credentials.serverUrl}/m42Services/api/ApiToken/GenerateAccessTokenFromApiToken`,
-			skipSslCertificateValidation: false,
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${credentials.webserviceToken}`,
-			},
-		})) as { RawToken: string };
-		return { accessToken: RawToken };
-	}
+	// async preAuthentication(this: IHttpRequestHelper, credentials: ICredentialDataDecryptedObject) {
+	// 	const { RawToken } = (await this.helpers.httpRequest({
+	// 		method: 'POST',
+	// 		url: `${credentials.serverUrl}/m42Services/api/ApiToken/GenerateAccessTokenFromApiToken`,
+	// 		skipSslCertificateValidation: false,
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Authorization': `Bearer ${credentials.webserviceToken}`,
+	// 		},
+	// 	})) as { RawToken: string };
+	// 	return { accessToken: RawToken };
+	// }
 
-	authenticate: IAuthenticateGeneric  = {
+	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
 			headers: {
-				Authorization: '=Bearer {{$credentials.accessToken}}',
+				Authorization: '=Bearer {{$credentials.webserviceToken}}',
 			},
 		},
 	};
